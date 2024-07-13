@@ -2,12 +2,16 @@
 .bundle
 vendor
 Gemfile.lock
+
 Gemfile
+
 # Jekyll cache
 .jekyll-cache
 .jekyll-metadata
 _site
 _sample
+.obsidian
+
 # RubyGems
 *.gem
 
@@ -20,7 +24,7 @@ package-lock.json
 .vscode
 !.vscode/settings.json
 !.vscode/extensions.json
-
+.env
 # Misc
 _sass/dist
 assets/js/dist
