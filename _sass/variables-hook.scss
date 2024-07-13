@@ -1,0 +1,9 @@
+footer {
+    p {
+      &:nth-of-type(2) {
+        // CSS rules go here
+        // For example, change the text color to blue
+        display: none;
+      }
+    }
+  }

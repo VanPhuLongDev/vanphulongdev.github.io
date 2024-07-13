@@ -2,7 +2,7 @@
 theme: jekyll-theme-chirpy
 lang: vi
 timezone: Asia/Bangkok
-
+plugins_dir: _plugins
 title: Felicy 
 
 tagline: Personal Blog 
@@ -15,15 +15,15 @@ url: "https://vanphulongdev.github.io"
 github:
   username: vanphulongdev # change to your github username
 
-twitter:
-  username: twitter_username # change to your twitter username
+# twitter:
+#   username: twitter_username # change to your twitter username
 
 social:
   name: Van Phu Long
   email: vanphulong02@gmail.com # change to your email address
   links:
-    - https://twitter.com/username # change to your twitter homepage
     - https://github.com/vanphulongdev # change to your github homepage
+    # change to your twitter homepage
     # Uncomment below to add more social links
     # - https://www.facebook.com/username
     # - https://www.linkedin.com/in/username
@@ -91,7 +91,7 @@ toc: true
 
 comments:
   # Global switch for the post comment system. Keeping it empty means disabled.
-  provider: disqus # [disqus | utterances | giscus]
+  provider: giscus # [disqus | utterances | giscus]
   # The provider options are as follows:
   disqus:
     shortname: # fill with the Disqus shortname. › https://help.disqus.com/en/articles/1717111-what-s-a-shortname
@@ -101,16 +101,15 @@ comments:
     issue_term: # < url | pathname | title | ...>
   # Giscus options › https://giscus.app
   giscus:
-    repo: "<%= ENV['repo'] %>" # <gh-username>/<repo>
-    repo_id: "<%= ENV['repo_id'] %>"
-    category: "<%= ENV['category'] %>"
-    category_id: "<%= ENV['category_id'] %>"
+    repo: VanPhuLongDev/vanphulongdev.github.io # <gh-username>/<repo>
+    repo_id: R_kgDOMVzrcw
+    category: General
+    category_id: DIC_kwDOMVzrc84Cgw-G
     mapping: pathname # optional, default to 'pathname'
     strict: 0 # optional, default to '0'
     input_position: top # optional, default to 'bottom'
-    lang: vi # optional, default to the value of `site.lang`
+    lang: en # optional, default to the value of `site.lang`
     reactions_enabled: # optional, default to the value of `1`
-    data-loading: lazy
 # Self-hosted static assets, optional › https://github.com/cotes2020/chirpy-static-assets
 assets:
   self_host:

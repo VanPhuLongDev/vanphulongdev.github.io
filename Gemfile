@@ -3,7 +3,6 @@
 source "https://rubygems.org"
 gem 'tzinfo'
 gem 'tzinfo-data'
-gem 'dotenv'
 gem "jekyll-theme-chirpy", "~> 7.0", ">= 7.0.1"
 
 group :test do
