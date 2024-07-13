@@ -2,12 +2,12 @@
 .bundle
 vendor
 Gemfile.lock
-
+Gemfile
 # Jekyll cache
 .jekyll-cache
 .jekyll-metadata
 _site
-
+_sample
 # RubyGems
 *.gem
 
