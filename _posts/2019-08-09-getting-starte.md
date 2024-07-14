@@ -1,0 +1,12 @@
+---
+title: Writing a New Post
+date: 2024-07-13 19:41:18 +0700
+categories:
+  - "Category 1"
+  - "Category 2"
+  - "Category 3"
+  - "Category 4"
+  - "Category 5"
+tags:
+---
+test
