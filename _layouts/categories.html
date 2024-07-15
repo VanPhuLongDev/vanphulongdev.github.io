@@ -63,8 +63,6 @@ layout: page
 </style>
 <div id="categoriesContainer"></div>
 <script>
-    // var obj = JSON.parse(decodeURIComponent("{{ filtered_categories  | jsonify | uri_escape }}"));
-    // console.log('Categories JSON:', obj);
     var obj = {{ filtered_categories | strip_newlines }};
     function processCategories(jsonData) {
       const categoriesMap = new Map();
