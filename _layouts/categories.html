@@ -63,7 +63,7 @@ layout: page
 </style>
 <div id="categoriesContainer"></div>
 <script>
-    var obj = {{ filtered_categories | strip_newlines }};
+    
     function processCategories(jsonData) {
       const categoriesMap = new Map();
       const processedPosts = new Set();
@@ -112,8 +112,7 @@ layout: page
       return Array.from(categoriesMap.values()).filter((cat) => !cat.parent);
     }
 
-    const hierarchicalCategories = processCategories(obj);
-    console.log('Hierarchical Categories:', hierarchicalCategories);
+    
 
     function updateCategoryStats(categories) {
       function calculatePostsAndChildrenCount(category) {
@@ -241,14 +240,20 @@ layout: page
       return deepestDivs;
     }
 
-    const categoriesContainer = document.getElementById("categoriesContainer");
-    categoriesContainer.innerHTML = renderCategories(updateCategoryStats(hierarchicalCategories));
-    setupTriggerIcons();
-    const deepestDivs = getDeepestDivs();
+    document.addEventListener('DOMContentLoaded', function() {
+        var obj = {{ filtered_categories | strip_newlines }};
+        const categoriesContainer = document.getElementById("categoriesContainer");
+        const hierarchicalCategories = processCategories(obj);
+        console.log('Hierarchical Categories:', hierarchicalCategories);
+        categoriesContainer.innerHTML = renderCategories(updateCategoryStats(hierarchicalCategories));
+        setupTriggerIcons();
+        const deepestDivs = getDeepestDivs();
 
-    deepestDivs.forEach((div) => {
-      div.classList.add("deepest");
-    });
+        deepestDivs.forEach((div) => {
+        div.classList.add("deepest");
+        });
+       
+    })
  
 </script>
 
