@@ -188,11 +188,7 @@ append: '": ' | append: filtered_posts | append: ', ' %} {% endif %} {% endfor
         const index = this.getAttribute("data-index");
         const arrowIcon = this.querySelector("i");
         const folderIcon = document.querySelector(`[data-folder-icon="${index}"] i`);
-
-        // Toggle arrow icon
         arrowIcon.classList.toggle("rotate");
-
-        // Toggle folder icon
         if (folderIcon.classList.contains("fa-folder-open")) {
           folderIcon.classList.replace("fa-folder-open", "fa-folder");
         } else {
