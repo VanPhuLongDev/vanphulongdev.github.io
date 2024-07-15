@@ -11,130 +11,198 @@ layout: page
 {% assign group_index = 0 %}
 
 {% assign sort_categories = site.categories | sort %}
+<div id="categoriesContainer">
+
+</div>
 <script>
-    console.log({{sort_categories}});
-</script>
-{% for category in sort_categories %}
-  {% assign category_name = category | first %}
-  {% assign posts_of_category = category | last %}
-  {% assign first_post = posts_of_category | first %}
+    var obj = JSON.parse(decodeURIComponent("{{ site.categories  | jsonify | uri_escape }}"));
+    console.log('Categories JSON:', obj);
 
-  {% if category_name == first_post.categories[0] %}
-    {% assign sub_categories = '' | split: '' %}
+    function processCategories(jsonData) {
+      const categoriesMap = new Map();
+      const processedPosts = new Set();
 
-    {% for post in posts_of_category %}
-      {% assign second_category = post.categories[1] %}
-      {% if second_category %}
-        {% unless sub_categories contains second_category %}
-          {% assign sub_categories = sub_categories | push: second_category %}
-        {% endunless %}
-      {% endif %}
-    {% endfor %}
+      function getCategory(name, parent = null) {
+        if (!categoriesMap.has(name)) {
+          categoriesMap.set(name, {
+            name,
+            postCount: 0,
+            posts: [],
+            children: [],
+            parent: parent ? parent.name : null,
+          });
+        }
+        return categoriesMap.get(name);
+      }
 
-    {% assign sub_categories = sub_categories | sort %}
-    {% assign sub_categories_size = sub_categories | size %}
+      Object.entries(jsonData).forEach(([categoryName, posts]) => {
+        posts.forEach((post) => {
+          if (processedPosts.has(post.url)) return;
+          processedPosts.add(post.url);
 
-    <div class="card categories">
-      <!-- top-category -->
-      <div
-        id="{{ HEAD_PREFIX }}{{ group_index }}"
-        class="card-header d-flex justify-content-between hide-border-bottom"
-      >
-        <span class="ms-2">
-          <i class="far fa-folder{% if sub_categories_size > 0 %}-open{% endif %} fa-fw"></i>
+          let parentCategory = null;
+          post.categories.forEach((catName) => {
+            const category = getCategory(catName, parentCategory);
+            if (
+              parentCategory &&
+              !parentCategory.children.some((child) => child.name === catName)
+            ) {
+              parentCategory.children.push(category);
+            }
+            parentCategory = category;
+          });
 
-          {% capture _category_url %}/categories/{{ category_name | slugify | url_encode }}/{% endcapture %}
-          <a href="{{ _category_url | relative_url }}" class="mx-2">{{ category_name }}</a>
+          if (parentCategory) {
+            parentCategory.postCount++;
+            parentCategory.posts.push({
+              title: post.title,
+              url: post.url,
+            });
+          }
+        });
+      });
 
-          <!-- content count -->
-          {% assign top_posts_size = site.categories[category_name] | size %}
-          <span class="text-muted small font-weight-light">
-            {% if sub_categories_size > 0 %}
-              {{ sub_categories_size }}
-              {% if sub_categories_size > 1 %}
-                {{
-                  site.data.locales[lang].categories.category_measure.plural
-                  | default: site.data.locales[lang].categories.category_measure
-                }}
-              {% else %}
-                {{
-                  site.data.locales[lang].categories.category_measure.singular
-                  | default: site.data.locales[lang].categories.category_measure
-                }}
-              {% endif -%}
-              ,
-            {% endif %}
+      return Array.from(categoriesMap.values()).filter((cat) => !cat.parent);
+    }
 
-            {{ top_posts_size }}
+    const hierarchicalCategories = processCategories(obj);
+    console.log('Hierarchical Categories:', hierarchicalCategories);
 
-            {% if top_posts_size > 1 %}
-              {{
-                site.data.locales[lang].categories.post_measure.plural
-                | default: site.data.locales[lang].categories.post_measure
-              }}
-            {% else %}
-              {{
-                site.data.locales[lang].categories.post_measure.singular
-                | default: site.data.locales[lang].categories.post_measure
-              }}
-            {% endif %}
-          </span>
-        </span>
+    function updateCategoryStats(categories) {
+      function calculatePostsAndChildrenCount(category) {
+        let postCount = category.postCount;
+        let childrenCount = category.children.length;
 
-        <!-- arrow -->
-        {% if sub_categories_size > 0 %}
-          <a
-            href="#{{ LIST_PREFIX }}{{ group_index }}"
-            data-bs-toggle="collapse"
-            aria-expanded="true"
-            aria-label="{{ HEAD_PREFIX }}{{ group_index }}-trigger"
-            class="category-trigger hide-border-bottom"
-          >
-            <i class="fas fa-fw fa-angle-down"></i>
-          </a>
-        {% else %}
-          <span data-bs-toggle="collapse" class="category-trigger hide-border-bottom disabled">
-            <i class="fas fa-fw fa-angle-right"></i>
-          </span>
-        {% endif %}
-      </div>
-      <!-- .card-header -->
+        category.children.forEach((child) => {
+          const childStats = calculatePostsAndChildrenCount(child);
+          postCount += childStats.totalPostCount;
+          childrenCount += childStats.totalChildrenCount;
+        });
 
-      <!-- Sub-categories -->
-      {% if sub_categories_size > 0 %}
-        <div id="{{ LIST_PREFIX }}{{ group_index }}" class="collapse show" aria-expanded="true">
-          <ul class="list-group">
-            {% for sub_category in sub_categories %}
-              <li class="list-group-item">
-                <i class="far fa-folder fa-fw"></i>
+        category.totalPostCount = postCount;
+        category.totalChildrenCount = childrenCount;
 
-                {% capture _sub_ctg_url %}/categories/{{ sub_category | slugify | url_encode }}/{% endcapture %}
-                <a href="{{ _sub_ctg_url | relative_url }}" class="mx-2">{{ sub_category }}</a>
+        return { totalPostCount: postCount, totalChildrenCount: childrenCount };
+      }
 
-                {% assign posts_size = site.categories[sub_category] | size %}
-                <span class="text-muted small font-weight-light">
-                  {{ posts_size }}
+      const updatedCategories = categories.map((category) => {
+        calculatePostsAndChildrenCount(category);
+        return category;
+      });
 
-                  {% if posts_size > 1 %}
-                    {{
-                      site.data.locales[lang].categories.post_measure.plural
-                      | default: site.data.locales[lang].categories.post_measure
-                    }}
-                  {% else %}
-                    {{
-                      site.data.locales[lang].categories.post_measure.singular
-                      | default: site.data.locales[lang].categories.post_measure
-                    }}
-                  {% endif %}
-                </span>
-              </li>
-            {% endfor %}
-          </ul>
+      return updatedCategories;
+    }
+
+    function renderCategories(categories) {
+      let html = '<div class="categories">';
+
+      categories.forEach((category, index) => {
+        html += renderCategory(category, index, 0);
+      });
+
+      html += "</div>";
+      return html;
+    }
+
+    function renderCategory(category, index, level) {
+      const hasChildren = category.children.length > 0;
+      const headId = `h-${index}`;
+      const contentId = `c-${index}`;
+
+      let html = `
+      <div class="${level == 0 ? "card categories category-paren" : "category-content"}" style="margin-left: ${20 + level * 3}px;">
+        <div id="${headId}" class="${hasChildren && level == 0 ? "card-header d-flex justify-content-between hide-border-bottom" : "list-group "}" style="${hasChildren && level == 0 ? "" : "border-radius: unset; flex-direction: row;justify-content: space-between;padding: 10px; padding-right: 13px;"}">
+          <div data-folder-icon="${index}">
+            <i class="category-icon ${hasChildren || category.totalPostCount > 0 ? "far fa-folder-open fa-fw" : "far fa-folder fa-fw"}"></i>
+          </div>
+          <a href="/categories/${encodeURIComponent(category.name.toLowerCase())}/" class="category-name border-transparent mx-2">${category.name}</a>
+          <span class="text-muted small font-weight-light">${category.totalChildrenCount} categories , ${category.totalPostCount} posts</span>
+          ${hasChildren || category.totalPostCount > 0 ? `
+            <div class="category-trigger hide-border-bottom" data-bs-toggle="collapse" data-index="${index}" data-bs-target="#${contentId}">
+              <i class="fas fa-fw fa-angle-down"></i>
+            </div>
+          ` : ""}
         </div>
-      {% endif %}
-    </div>
-    <!-- .card -->
+        ${renderPosts(category.posts, level + 1, index)}
+        ${hasChildren ? `
+          <div id="${contentId}" class="category-content collapse show">
+            ${category.children.map((child, childIndex) => renderCategory(child, `${index}-${childIndex}`, level + 1)).join('')}
+          </div>
+        ` : ""}
+      </div>
+      `;
+      return html;
+    }
 
-    {% assign group_index = group_index | plus: 1 %}
-  {% endif %}
-{% endfor %}
+    function renderPosts(posts, level, index) {
+      if (posts.length === 0) return "";
+
+      let html = `<div id="c-${index}" class="posts-${level - 1} category-content collapse show" style="margin-left: ${20 + level * 3}px;">`;
+      posts.forEach((post) => {
+        html += `
+        <div class="post" style="align-items: center; display: flex;">
+          <i class="post-icon fa-regular fa-file-lines" style="font-size:16px"></i>
+          <a href="${post.url}" class="border-transparent post-title mx-2">${post.title}</a>
+        </div>
+        `;
+      });
+      html += "</div>";
+      return html;
+    }
+
+    function setupTriggerIcons() {
+      document.querySelectorAll(".category-trigger").forEach((trigger) => {
+        trigger.addEventListener("click", function () {
+          const index = this.getAttribute("data-index");
+          const arrowIcon = this.querySelector("i");
+          const folderIcon = document.querySelector(`[data-folder-icon="${index}"] i`);
+
+          // Toggle arrow icon
+          arrowIcon.classList.toggle("rotate");
+
+          // Toggle folder icon
+          if (folderIcon.classList.contains("fa-folder-open")) {
+            folderIcon.classList.replace("fa-folder-open", "fa-folder");
+          } else {
+            folderIcon.classList.replace("fa-folder", "fa-folder-open");
+          }
+        });
+      });
+    }
+
+    function getDeepestDivs() {
+      const outerDivs = document.querySelectorAll(".category-paren");
+      const deepestDivs = [];
+
+      outerDivs.forEach((outerDiv) => {
+        let currentLevel = [outerDiv];
+
+        while (currentLevel.length > 0) {
+          const nextLevel = [];
+          currentLevel.forEach((div) => {
+            const children = Array.from(div.children).filter((child) => child.tagName === "DIV");
+            if (children.length === 0) {
+              deepestDivs.push(div);
+            } else {
+              nextLevel.push(...children);
+            }
+          });
+          currentLevel = nextLevel;
+        }
+      });
+
+      return deepestDivs;
+    }
+
+    const categoriesContainer = document.getElementById("categoriesContainer");
+    categoriesContainer.innerHTML = renderCategories(updateCategoryStats(hierarchicalCategories));
+    setupTriggerIcons();
+    const deepestDivs = getDeepestDivs();
+
+    deepestDivs.forEach((div) => {
+      div.classList.add("deepest");
+    });
+ 
+</script>
+
+
