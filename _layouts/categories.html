@@ -157,7 +157,7 @@ append: '": ' | append: filtered_posts | append: ', ' %} {% endif %} {% endfor
       </div>
       ${renderPosts(category.posts, level + 1, index)}
       ${hasChildren ? `
-        <div id="${contentId}" class="category-content collapse show">
+        <div id="${contentId}" class="category-content ${level>0?"border-start":""} collapse show">
           ${category.children.map((child, childIndex) => renderCategory(child, `${index}-${childIndex}`, level + 1)).join('')}
         </div>
       ` : ""}
