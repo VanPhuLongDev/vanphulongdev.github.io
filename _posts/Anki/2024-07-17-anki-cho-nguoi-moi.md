@@ -70,10 +70,10 @@ Vào Tools -> Add ons -> Get addons -> Điền id 111623432
 
 **Bước 3** Vào Browse -> Lướt thanh nav bên tay trái, chọn tag từ vựng mà bạn đã tạo ( Ở ô số 1 ) -> Xong chọn tất cả từ vựng của tag đó ( chọn bất kì một từ rồi bấm ctrl + A ) -> Chọn HyperTTS ở thanh công cụ -> Add audio collection 
 
-![](../../assets/img/2024-07-17-anki-cho-nguoi-moi-20240717152831384.webp)
+![](/assets/img/2024-07-17-anki-cho-nguoi-moi-20240717152831384.webp)
 
 
-![](../../assets/img/2024-07-17-anki-cho-nguoi-moi-20240717153205135.webp)
+![](/assets/img/2024-07-17-anki-cho-nguoi-moi-20240717153205135.webp)
 
 Bạn cần chú ý chỉnh 4 phần này:
 - Source:
@@ -92,7 +92,7 @@ Sau khi chỉnh xong -> Save ( ở trên góc bên trái ) -> Apply to Notes ( G
 Từ những lần sau, bạn muốn thêm audio cho list từ vựng mới thì chỉ cần lặp lại những bước này, tuy nhiên ở bước 3 Chọn HyperTTS ở thanh công cụ -> Add audio collection: Preset 1 ( đây chính là setting bạn lưu ở bước trên )
 
 ## Cách học anki
-![](../../assets/img/2024-07-17-anki-cho-nguoi-moi-20240717154439488.webp)
+![](/assets/img/2024-07-17-anki-cho-nguoi-moi-20240717154439488.webp)
 
 Khi học từ vựng, mỗi khi bấm Show Answer thì anki sẽ hiện 4 nút này. 
 - Again: Từ quá khó, bạn không biết gì
